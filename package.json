@@ -1,0 +1,24 @@
+{
+  "name": "carnaby-modular",
+  "version": "0.0.0",
+  "description": "Automated Backbone.Marionette bootstrapping using Backbone.Marionette.Module",
+  "main": "gruntfile.js",
+  "scripts": {
+    "test": "grunt test "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mcsdh/carnaby-modular.git"
+  },
+  "author": "Leon Coto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mcsdh/carnaby-modular/issues"
+  },
+  "homepage": "https://github.com/mcsdh/carnaby-modular",
+  "devDependencies": {
+    "grunt-releaser2": "~0.1.1",
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.11.0"
+  }
+}
