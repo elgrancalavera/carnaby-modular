@@ -43,6 +43,25 @@ define(function (require) {
         })
 
         describe(
+        'Global Configuration',
+        function() {
+
+            it(
+            'Should return an error when a global configuration key is given ' +
+            'and a global configuration object is not found.',
+            function(done) {
+                Modular({
+                    $el: $('#undefined-app'),
+                    configKey: 'nothing'
+                }, function(err) {
+                    expect(err).to.be.instanceof(Error)
+                    done()
+                })
+            })
+
+        })
+
+        describe(
         'Missing Definitions',
         function() {
 
@@ -54,17 +73,5 @@ define(function (require) {
 
         })
 
-        describe(
-        'Global Configuration',
-        function() {
-
-            xit(
-            'Should return an error when a global configuration key is given ' +
-            'and a global configuration object is not found.',
-            function(done) {
-
-            })
-
-        })
     })
 });

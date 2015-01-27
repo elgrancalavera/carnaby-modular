@@ -28,6 +28,18 @@ define(function (require) {
         return new Error('Invalid root element: options.$el must match the following selector: "' + appSelector.selector() + '".')
     }
 
+    function missingConfigurationObject(key) {
+        return new Error('Global configuration object for key "' + key + '" not found.')
+    }
+
+    /*
+     * Dynamically generates a modular based Marionette.Applcation.
+     * options.$el Required jQuery selection matching [data-app]
+     * options.configKey Optional String the key for a global object storing
+     *  configuration data for the modules.
+     * callback Function a callback function with the following signature:
+     *  function(error:Error, app:Marionette.Application)
+     */
     function Modular(options, callback) {
 
         if (!_.isObject(options) || !_.isFunction(callback)) {
@@ -40,6 +52,10 @@ define(function (require) {
 
         if(!appSelector(options.$el).isValid()) {
             callback(invalidElement())
+        }
+
+        if (_.isString(options.configKey) && _.isUndefined(window[options.configKey])) {
+            callback(missingConfigurationObject(options.configKey))
         }
 
     }
