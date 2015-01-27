@@ -6,6 +6,7 @@ define(function (require) {
     'use strict';
 
     var t = require('transform')
+    ,   Err = require('modular/errors')
     ,   _ = require('underscore')
 
     ,   appSelector = t.selector('app')
@@ -15,22 +16,6 @@ define(function (require) {
     ,   moduleRule = t.rule(moduleSelector, [moduleSelector])
 
     ,   appTransform = t([appRule, moduleRule])
-
-    function undefinedRoot() {
-        return new Error('Required option `$el` is missing.')
-    }
-
-    function wrongArguments() {
-        return new Error('Wrong arguments. Required argument `options` must be an  Object. Required argument `callback` must be a Function.')
-    }
-
-    function invalidElement() {
-        return new Error('Invalid root element: options.$el must match the following selector: "' + appSelector.selector() + '".')
-    }
-
-    function missingConfigurationObject(key) {
-        return new Error('Global configuration object for key "' + key + '" not found.')
-    }
 
     /*
      * Dynamically generates a modular based Marionette.Applcation.
@@ -43,22 +28,32 @@ define(function (require) {
     function Modular(options, callback) {
 
         if (!_.isObject(options) || !_.isFunction(callback)) {
-            throw wrongArguments()
+            throw new Err.WrongArgumentsError()
         }
 
         if (!options.$el) {
-            return callback(undefinedRoot())
+            return callback(new Err.MissingElementError())
         }
 
         if(!appSelector(options.$el).isValid()) {
-            callback(invalidElement())
+            return callback(new Err.InvalidRootElementError(appSelector.selector()))
         }
 
         if (_.isString(options.configKey) && _.isUndefined(window[options.configKey])) {
-            callback(missingConfigurationObject(options.configKey))
+            return callback(new Err.MissingConfigurationError(options.configKey))
         }
 
     }
+
+    //----------------------------------
+    //
+    // Expose all errors
+    //
+    //----------------------------------
+
+    _.each(Err, function(value, key) {
+        Modular[key] = value
+    })
 
     return Modular
 });

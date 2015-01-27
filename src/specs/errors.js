@@ -19,14 +19,14 @@ define(function (require) {
             it(
             'Should throw an error when called with the wrong arguments.',
             function() {
-                expect(Modular).to.throw(Error)
+                expect(Modular).to.throw(Modular.WrongArgumentsError)
             })
 
             it(
             'Should return an error when the root selection is not defined.',
             function(done) {
                 Modular({}, function(err) {
-                    expect(err).to.be.instanceof(Error)
+                    expect(err).to.be.instanceof(Modular.MissingElementError)
                     done()
                 })
             })
@@ -35,7 +35,7 @@ define(function (require) {
             'Should return an error when the root selection is not valid.',
             function(done) {
                 Modular({$el: $('nothing')}, function(err) {
-                    expect(err).to.be.instanceof(Error)
+                    expect(err).to.be.instanceof(Modular.InvalidRootElementError)
                     done()
                 })
             })
@@ -51,10 +51,10 @@ define(function (require) {
             'and a global configuration object is not found.',
             function(done) {
                 Modular({
-                    $el: $('#undefined-app'),
+                    $el: $('#broken-app'),
                     configKey: 'nothing'
                 }, function(err) {
-                    expect(err).to.be.instanceof(Error)
+                    expect(err).to.be.instanceof(Modular.MissingConfigurationError)
                     done()
                 })
             })

@@ -6,7 +6,23 @@
 </head>
 <body>
 
-    <div id="undefined-app" data-app="undefined"></div>
+    <div id="working-app" data-app>
+        <div data-module="specs/module-1">
+            <div data-module="specs/module-1"></div>
+            <div data-module="specs/module-2"></div>
+        </div>
+    </div>
+
+    <div id="broken-app" data-app>
+        <div data-module="specs/module-1">
+            <div data-module="specs/module-unknown-1"></div>
+            <div data-module="specs/module-2">
+                <div data-module="specs/module-unknown-2"></div>
+                <div data-module="specs/module-unknown-3"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="mocha"></div>
 
 <script src="/bower_components/mocha/mocha.js"></script>
