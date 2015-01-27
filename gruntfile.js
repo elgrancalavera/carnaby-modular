@@ -47,6 +47,48 @@ module.exports = function(grunt) {
 
         //----------------------------------
         //
+        // watch
+        //
+        //----------------------------------
+
+        watch: {
+            grunt: {
+                files: [
+                    '<%= jshint.grunt.files.src %>'
+                ],
+                tasks: [
+                    'jshint:grunt',
+                ]
+            },
+            specs: {
+                options: {
+                    livereload: true
+                },
+                files: [
+                    '<%= jshint.specs.files.src %>',
+                    'index.html',
+                ],
+                tasks: [
+                    'jshint:specs',
+                    'mocha:specs',
+                ]
+            },
+            src: {
+                options: {
+                    livereload: true
+                },
+                files: [
+                    '<%= jshint.src.files.src %>'
+                ],
+                tasks: [
+                    'jshint:src',
+                    'mocha:specs',
+                ]
+            },
+        },
+
+        //----------------------------------
+        //
         // connect
         //
         //----------------------------------
