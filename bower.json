@@ -1,6 +1,6 @@
 {
   "name": "carnaby-modular",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/mcsdh/carnaby-modular",
   "authors": [
     "Leon Coto <leon.coto@mcsaatchi.com>"
@@ -29,8 +29,8 @@
     "requirejs": "~2.1.15"
   },
   "devDependencies": {
-    "carnaby-transform": "~0.1.11",
+    "carnaby-transform": "~0.1.0",
     "chai": "~1.10.0",
-    "mocha": "~2.1.0",
+    "mocha": "~2.1.0"
   }
 }
