@@ -5,72 +5,16 @@ define(function (require) {
 
     'use strict';
 
-    //----------------------------------
-    //
-    // Deps
-    //
-    //----------------------------------
-
     var _ = require('underscore')
     , $ = require('jquery')
     , t = require('transform')
     , Err = require('modular/errors')
-
-    //----------------------------------
-    //
-    // Conf
-    //
-    //----------------------------------
-
     , appSelector = t.selector('app')
     , moduleSelector = t.selector('module')
+    , Marionette = require('backbone.marionette')
     , appRule = t.rule(appSelector, [moduleSelector])
     , moduleRule = t.rule(moduleSelector, [moduleSelector])
     , appTransform = t([appRule, moduleRule])
-
-    //----------------------------------
-    //
-    // Utils
-    //
-    //----------------------------------
-
-    function nodePaths(node, parent) {
-        var current = parent.concat(node)
-        return  _.reduce(node.children, function(names_, child) {
-            return names_.concat(nodePaths(child, current))
-        }, [ current ])
-    }
-
-    function name(node) {
-        return $(node.el).attr('data-name') || _.uniqueId('unnamed-')
-    }
-
-    function definition(node) {
-        return moduleSelector(node.el).value()
-    }
-
-    function nameFromPath(pathToNode) {
-        return _.reduce(pathToNode, function (nameParts, node) {
-            return nameParts.concat(name(node))
-        }, []).join('.')
-    }
-
-    function configureNode(getData, configured, pathToNode) {
-        var node
-        if (pathToNode.length === 1) { return configured }
-        node = _.last(pathToNode)
-        node.name = nameFromPath(pathToNode.slice(1))
-        node.data = getData(name(node))
-        node.definition = definition(node)
-        return configured.concat(node)
-    }
-
-    function globalConfig(configKey) {
-        var cfg = window[configKey] || {}
-        return function (key) {
-            return cfg[key] || {}
-        }
-    }
 
     //--------------------------------------------------------------------------
     //
@@ -84,13 +28,15 @@ define(function (require) {
      * options.configKey Optional String the key for a global object storing
      *  configuration data for the modules.
      * callback Function a callback function with the following signature:
-     *  function(error:Error, app:Marionette.Application)
+     *  function(error:Error, result:Object { app, options })
      */
+
     function Modular(options, callback) {
 
         var getData
         , modules
         , configure
+        , definitions
 
         if (!_.isObject(options) || !_.isFunction(callback)) {
             throw new Err.WrongArgumentsError()
@@ -116,8 +62,24 @@ define(function (require) {
             .reduce(configure, [])
             .value()
 
-        // jshint debug:true
-        debugger
+        definitions = _
+            .chain(modules)
+            .pluck('definition')
+            .uniq()
+            .value()
+
+        if(hasMissingDefinitions(definitions)){
+            return callback(new Err.MissingDefinitionError())
+        }
+
+        loadDefinitions(definitions,
+            function() {
+                callback(null, application(modules))
+            },
+            function(error) {
+                callback(new Err.FailedToLoadDefinitionError(error))
+            }
+        )
     }
 
     //----------------------------------
@@ -129,6 +91,80 @@ define(function (require) {
     _.each(Err, function(value, key) {
         Modular[key] = value
     })
+
+    //--------------------------------------------------------------------------
+    //
+    // Utils
+    //
+    //--------------------------------------------------------------------------
+
+    function application(modules) {
+        var app = new Marionette.Application()
+        , options = {}
+        _.each(modules, function(module) {
+            options[module.shortName] = module.data
+            app.module(module.name, require(module.definition))
+        })
+        return {
+            app: app,
+            options: options
+        }
+    }
+
+    function loadDefinitions(definitions, success, error) {
+        var failed = false
+        require(definitions, success, function(err) {
+            // bail on first error
+            if (failed) { return }
+            error(err)
+            failed = true
+        })
+    }
+
+    function hasMissingDefinitions(definitions) {
+        return _.some(definitions, function(definition) {
+            return !definition
+        })
+    }
+
+    function nodePaths(node, parent) {
+        var current = parent.concat(node)
+        return  _.reduce(node.children, function(names_, child) {
+            return names_.concat(nodePaths(child, current))
+        }, [ current ])
+    }
+
+    function name(node) {
+        return $(node.el).attr('data-name') || _.uniqueId('unnamed-')
+    }
+
+    function definition(node) {
+        return moduleSelector(node.el).value() || undefined
+    }
+
+    function nameFromPath(pathToNode) {
+        return _.reduce(pathToNode, function (nameParts, node) {
+            return nameParts.concat(name(node))
+        }, []).join('.')
+    }
+
+    function configureNode(getData, configured, pathToNode) {
+        var node
+        if (pathToNode.length === 1) { return configured }
+        node = _.last(pathToNode)
+        node.name = nameFromPath(pathToNode.slice(1))
+        node.data = getData(name(node))
+        node.shortName = name(node)
+        node.definition = definition(node)
+        return configured.concat(node)
+    }
+
+    function globalConfig(configKey) {
+        var cfg = window[configKey] || {}
+        return function (key) {
+            return cfg[key] || {}
+        }
+    }
 
     return Modular
 });

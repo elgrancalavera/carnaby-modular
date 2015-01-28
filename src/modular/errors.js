@@ -55,10 +55,19 @@ define(function () {
     //
     //----------------------------------
 
-    Errors.MissingDefinitionError = function(selector) {
-        this.message = 'Missing definition for selector "' + selector + '".'
+    Errors.MissingDefinitionError = function() {
+        this.message = 'Missing definition string for some modules.'
     }
 
+    //----------------------------------
+    //
+    // FailedToLoadDefinitionError
+    //
+    //----------------------------------
+
+    Errors.FailedToLoadDefinitionError = function(originalError) {
+        this.message = 'Some definitions failed to load.\n' + originalError.message
+    }
 
     _.each(Errors, function(E) { E.prototype = new Error() })
     return Errors

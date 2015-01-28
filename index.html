@@ -12,7 +12,9 @@
     }
 </script>
 
-    <div id="working-app" data-app>
+    <div id="app" data-app >
+        <div data-name="module1" data-module="specs/module-1"></div>
+        <div data-name="module2" data-module="specs/module-2"></div>
         <div data-name="level-0" data-module="specs/module-1">
             <div data-name="level-1a" data-module="specs/module-1"></div>
             <div data-name="level-1b" data-module="specs/module-2"></div>
@@ -27,18 +29,15 @@
         </div>
     </div>
 
-    <div id="broken-app" data-app>
-        <div data-name="top-level-module" data-module="specs/module-1">
-            <div data-module="specs/module-unknown-1"></div>
-            <div data-module="specs/module-2">
-                <div data-module="specs/module-unknown-2"></div>
-                <div data-module="specs/module-unknown-3"></div>
-            </div>
-        </div>
-        <div data-module>
-            <div data-module></div>
-            <div data-module></div>
-        </div>
+    <div id="missing-defs" data-app >
+        <div data-module ></div>
+    </div>
+
+    <div id="fail-to-load-defs" data-app>
+        <div data-module="unknown-1"></div>
+        <div data-module="unknown-2"></div>
+        <div data-module="specs/module-1"></div>
+        <div data-module="specs/module-2"></div>
     </div>
 
     <div id="mocha"></div>
@@ -71,7 +70,7 @@ require([
 ], function(chai) {
     mocha.setup('bdd')
     require([
-        'specs/errors'
+        'specs/main'
     ], function() {
         mocha.run()
     })

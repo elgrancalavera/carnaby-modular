@@ -6,9 +6,12 @@
 define(function (require) {
     'use strict';
 
-    var expect = require('chai').expect
-    var $ = require('jquery')
     var Modular = require('modular')
+    , $ = require('jquery')
+    , expect = require('chai').expect
+    , Marionette = require('backbone.marionette')
+    , Module1 = require('./module-1')
+    , Module2 = require('./module-2')
 
     describe('Errors', function() {
 
@@ -51,7 +54,7 @@ define(function (require) {
             'and a global configuration object is not found.',
             function(done) {
                 Modular({
-                    $el: $('#working-app'),
+                    $el: $('#app'),
                     configKey: 'nothing'
                 }, function(err) {
                     expect(err).to.be.instanceof(Modular.MissingConfigurationError)
@@ -69,19 +72,52 @@ define(function (require) {
             'Should return an error when the definition for any module is not specified.',
             function(done) {
                 Modular({
-                    $el: $('#working-app')
+                    $el: $('#missing-defs')
                 }, function(err) {
                     expect(err).to.be.instanceof(Modular.MissingDefinitionError)
                     done()
                 })
             })
 
-            xit(
+            it(
             'Should return an error when one or more definitions fail to load.',
             function(done) {
-
+                Modular({
+                    $el: $('#fail-to-load-defs')
+                }, function(err) {
+                    expect(err).to.be.instanceof(Modular.FailedToLoadDefinitionError)
+                    done()
+                })
             })
         })
 
+    })
+
+    describe('Marionette.Application', function () {
+
+        var err, result
+
+        before(function(done) {
+            Modular({
+                $el: $('#app'),
+                configKey: 'globalConfig'
+            }, function(err_, result_) {
+                err = err_
+                result = result_
+                done()
+            })
+        })
+
+        it(
+        'Should return null in the error',
+        function() {
+            expect(err).to.be.null()
+        })
+
+        it(
+        'Should return a Marionette.Application.',
+        function() {
+            expect(result.app).to.be.instanceof(Marionette.Application)
+        })
     })
 });
