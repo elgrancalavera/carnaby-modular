@@ -13,7 +13,7 @@ define(function (require) {
     describe('Errors', function() {
 
         describe(
-        'Invalid Selections',
+        'Invalid Selections:',
         function() {
 
             it(
@@ -43,7 +43,7 @@ define(function (require) {
         })
 
         describe(
-        'Global Configuration',
+        'Global Configuration:',
         function() {
 
             it(
@@ -51,7 +51,7 @@ define(function (require) {
             'and a global configuration object is not found.',
             function(done) {
                 Modular({
-                    $el: $('#broken-app'),
+                    $el: $('#working-app'),
                     configKey: 'nothing'
                 }, function(err) {
                     expect(err).to.be.instanceof(Modular.MissingConfigurationError)
@@ -62,15 +62,25 @@ define(function (require) {
         })
 
         describe(
-        'Missing Definitions',
+        'Errors on Module Definitions:',
         function() {
 
+            it(
+            'Should return an error when the definition for any module is not specified.',
+            function(done) {
+                Modular({
+                    $el: $('#working-app')
+                }, function(err) {
+                    expect(err).to.be.instanceof(Modular.MissingDefinitionError)
+                    done()
+                })
+            })
+
             xit(
-            'Should return an error when the definition for a module is not found.',
+            'Should return an error when one or more definitions fail to load.',
             function(done) {
 
             })
-
         })
 
     })

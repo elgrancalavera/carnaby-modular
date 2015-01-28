@@ -4,30 +4,62 @@ define(function () {
     'use strict';
 
     var Errors = {}
+    , _ = require('underscore')
+
+    //----------------------------------
+    //
+    // WrongArgumentsError
+    //
+    //----------------------------------
 
     Errors.WrongArgumentsError = function() {
         this.message = 'Wrong arguments. ' +
         'Required argument `options` must be an  Object. ' +
         'Required argument `callback` must be a Function.'
     }
-    Errors.WrongArgumentsError.prototype = new Error()
+
+    //----------------------------------
+    //
+    // InvalidRootElementError
+    //
+    //----------------------------------
 
     Errors.InvalidRootElementError = function(selector) {
         this.message = 'Invalid root element. ' +
         'options.$el must match the following selector: "' + selector + '".'
     }
-    Errors.InvalidRootElementError.prototype = new Error()
+
+    //----------------------------------
+    //
+    // MissingElementError
+    //
+    //----------------------------------
 
     Errors.MissingElementError = function() {
         this.message = 'Required option `$el` is missing.'
     }
-    Errors.MissingElementError.prototype = new Error()
+
+    //----------------------------------
+    //
+    // MissingConfigurationError
+    //
+    //----------------------------------
 
     Errors.MissingConfigurationError = function(key) {
         this.message = 'Global configuration object for key "' + key + '" not found.'
     }
-    Errors.MissingConfigurationError.prototype = new Error()
+
+    //----------------------------------
+    //
+    // MissingDefinitionError
+    //
+    //----------------------------------
+
+    Errors.MissingDefinitionError = function(selector) {
+        this.message = 'Missing definition for selector "' + selector + '".'
+    }
 
 
+    _.each(Errors, function(E) { E.prototype = new Error() })
     return Errors
 });
