@@ -205,7 +205,7 @@ modular = function (require) {
   }
   return Modular;
 }({});
-modular.VERSION = '0.0.0'
+modular.VERSION = '0.0.1'
 return modular;
 });
 /*
