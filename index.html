@@ -2,46 +2,48 @@
 <html>
 <head>
     <title>carnaby-modular</title>
+    <link rel="stylesheet" type="text/css" href="/bower_components/mocha/mocha.css">
 </head>
 <body>
-    <div id="app"></div>
-<script src="/bower_components/mocha/mocha.js"></script>
-<script src="/bower_components/requirejs/require.js"></script>
-
-    <div id="unknown"></div>
-
 <script>
-require.config({
-    baseUrl: '/src',
-    paths: {
-        underscore: '../bower_components/underscore/underscore',
-        jquery: '../bower_components/jquery/dist/jquery',
-        chai: '../bower_components/chai/chai',
-        backbone: '../bower_components/backbone/backbone',
-        'backbone.marionette': '../bower_components/backbone.marionette/lib/core/backbone.marionette',
-        'backbone.babysitter': '../bower_components/backbone.babysitter/lib/backbone.babysitter',
-        'backbone.wreqr': '../bower_components/backbone.wreqr/lib/backbone.wreqr',
-        transform: '../bower_components/carnaby-transform/dist/transform'
+    window.globalConfig = {
+        'level-0': {foo: 'bar'},
+        'level-2b': {bar: 'baz'}
     }
-})
-
-require([
-    'chai',
-    'jquery',
-    'underscore',
-    'backbone.marionette',
-    'transform',
-    'modular'
-], function(chai) {
-    mocha.setup('bdd')
-    require([
-        'specs/errors'
-    ], function() {
-        mocha.run()
-    })
-})
-
 </script>
+
+    <div id="app" data-app >
+        <div data-name="module1" data-module="specs/module-1"></div>
+        <div data-name="module2" data-module="specs/module-2"></div>
+        <div data-name="level-0" data-module="specs/module-1">
+            <div data-name="level-1a" data-module="specs/module-1"></div>
+            <div data-name="level-1b" data-module="specs/module-2"></div>
+            <div data-name="level-1c" data-module="specs/module-1">
+                <div data-name="level-2a" data-module="specs/module-1"></div>
+                <div data-name="level-2b" data-module="specs/module-2"></div>
+            </div>
+            <div data-module="specs/module-1">
+                <div data-module="specs/module-1"></div>
+                <div data-module="specs/module-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="missing-defs" data-app >
+        <div data-module ></div>
+    </div>
+
+    <div id="fail-to-load-defs" data-app>
+        <div data-module="unknown-1"></div>
+        <div data-module="unknown-2"></div>
+        <div data-module="specs/module-1"></div>
+        <div data-module="specs/module-2"></div>
+    </div>
+
+    <div id="mocha"></div>
+
+<script src="/bower_components/mocha/mocha.js"></script>
+<script data-main="/src/main" src="/bower_components/requirejs/require.js"></script>
 <script src="//localhost:35729/livereload.js"></script>
 </body>
 </html>
