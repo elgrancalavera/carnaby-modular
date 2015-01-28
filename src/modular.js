@@ -9,9 +9,10 @@ define(function (require) {
     , $ = require('jquery')
     , t = require('transform')
     , Err = require('modular/errors')
+    , Marionette = require('backbone.marionette')
+
     , appSelector = t.selector('app')
     , moduleSelector = t.selector('module')
-    , Marionette = require('backbone.marionette')
     , appRule = t.rule(appSelector, [moduleSelector])
     , moduleRule = t.rule(moduleSelector, [moduleSelector])
     , appTransform = t([appRule, moduleRule])

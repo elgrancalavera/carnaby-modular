@@ -5,6 +5,8 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
+        pkg: grunt.file.readJSON('package.json'),
+
         //----------------------------------
         //
         // jshint
@@ -125,7 +127,96 @@ module.exports = function(grunt) {
             }
         },
 
-        clean: []
+        //----------------------------------
+        //
+        // requirejs
+        //
+        //----------------------------------
+
+        requirejs: {
+            dist: {
+                options: {
+                    baseUrl: 'src',
+                    mainConfigFile: 'src/main.js',
+                    dir: '.tmp',
+                    optimize: 'none',
+                    onModuleBundleComplete: function() {
+                        var src = '.tmp/modular.js'
+                        , dest = 'dist/modular.js'
+                        , start = grunt.template.process(grunt.file.read('wrap/start.js'))
+                        , end = grunt.template.process(grunt.file.read('wrap/end.js'))
+                        grunt.file.write(dest, require('amdclean').clean({
+                            filePath: src,
+                            // https://github.com/umdjs/umd/blob/master/returnExports.js
+                            wrap: { start: start, end: end }
+                        }))
+                    }
+                }
+            }
+        },
+
+        //----------------------------------
+        //
+        // uglify
+        //
+        //----------------------------------
+
+        uglify: {
+            dist: {
+                options: {
+                    sourceMap: true,
+                },
+                files: {
+                    'dist/modular.min.js': ['dist/modular.js']
+                }
+            }
+        },
+
+        //----------------------------------
+        //
+        // releaser
+        //
+        //----------------------------------
+
+        releaser: {
+            options: {
+                additionalFiles: [ 'bower.json' ],
+                tagName: 'v<%= version %>',
+            },
+            bump: {
+                options: {
+                    bump: true,
+                    add: true,
+                    commit: true,
+                    push: false,
+                    tag: false,
+                    pushTags: false,
+                    npm: false,
+                    reloadpkg: true
+                }
+            },
+            release: {
+                options: {
+                    bump: false,
+                    commit: false,
+                    add: false,
+                    push: true,
+                    tag: true,
+                    pushTags: true,
+                    npm: true,
+                }
+            }
+        },
+        //----------------------------------
+        //
+        // clean
+        //
+        //----------------------------------
+
+        clean: [
+            '.tmp',
+            'dist'
+        ]
 
     })
 
@@ -153,6 +244,9 @@ module.exports = function(grunt) {
         'Tests and builds.',
         [
             'test',
+            'clean',
+            'requirejs:dist',
+            'uglify:dist',
         ]
     )
 
