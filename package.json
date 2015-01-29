@@ -1,6 +1,6 @@
 {
   "name": "carnaby-modular",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Automated Backbone.Marionette bootstrapping using Backbone.Marionette.Module",
   "main": "gruntfile.js",
   "scripts": {

@@ -119,5 +119,15 @@ define(function (require) {
         function() {
             expect(result.app).to.be.instanceof(Marionette.Application)
         })
+
+        it(
+        'Should be properly configured.',
+        function() {
+            expect(result.options['level-0']).to.be.ok()
+            expect(result.options['level-0'].$el).to.be.ok()
+            expect(result.options['level-0'].model).to.deep.equal({
+                foo: 'bar'
+            })
+        })
     })
 });
