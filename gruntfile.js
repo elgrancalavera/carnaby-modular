@@ -140,18 +140,24 @@ module.exports = function(grunt) {
                     mainConfigFile: 'src/main.js',
                     dir: '.tmp',
                     optimize: 'none',
-                    onModuleBundleComplete: function() {
-                        var src = '.tmp/modular.js'
-                        , dest = 'dist/modular.js'
-                        , start = grunt.template.process(grunt.file.read('wrap/start.js'))
-                        , end = grunt.template.process(grunt.file.read('wrap/end.js'))
-                        grunt.file.write(dest, require('amdclean').clean({
-                            filePath: src,
-                            // https://github.com/umdjs/umd/blob/master/returnExports.js
-                            wrap: { start: start, end: end }
-                        }))
-                    }
                 }
+            }
+        },
+
+        //----------------------------------
+        //
+        // copy
+        //
+        //----------------------------------
+
+        copy: {
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp',
+                    src: ['modular.js'],
+                    dest: 'dist'
+                }]
             }
         },
 
@@ -246,6 +252,7 @@ module.exports = function(grunt) {
             'test',
             'clean',
             'requirejs:dist',
+            'copy:dist',
             'uglify:dist',
         ]
     )
