@@ -178,7 +178,10 @@ define('modular',['require','underscore','jquery','transform','modular/errors','
         var app = new Marionette.Application()
         , options = {}
         _.each(modules, function(module) {
-            options[module.shortName] = module.data
+            options[module.shortName] = {
+                model: module.data,
+                $el: $(module.el)
+            }
             app.module(module.name, require(module.definition))
         })
         return {
